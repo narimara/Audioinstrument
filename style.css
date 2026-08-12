@@ -5,16 +5,19 @@
     --colour-01: white;
     --colour-02: black;
     --colour-03: lightgrey;
-    --colour-04: darkgrey;
+    --colour-04: #424242;
+    --colour-05: #154853;
     --border: 0.25rem double var(--colour-03);
+    --button-border: 1rem double var(--colour-05);
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         --colour-01: black;
         --colour-02: white;
-        --colour-03: darkgrey;
+        --colour-03: #424242;
         --colour-04: lightgrey;
+        --colour-05: #42bd95;
     }
 }
 
@@ -34,6 +37,13 @@ dialog[open] {
     gap: 1rem;
     align-items: center;
     border: var(--border);
+}
+
+button {
+    background-color: var(--colour-01);
+    color: var(--colour-02);
+    padding: 1rem;
+    border: var(--button-border);
 }
 
 
