@@ -46,5 +46,13 @@ button {
     border: var(--button-border);
 }
 
+#key-test {
+    cursor: pointer;
+}
+
+#key-test:active {
+    background-color: var(--colour-05)
+}
+
 
 
