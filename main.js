@@ -9,8 +9,10 @@ const introDialogCloseButton = document.getElementById("intro-dialog-close");
 
 //find test button (like declaring gameObject)
 const testButton = document.getElementById('test-button');
+const key = document.getElementById('key-test');
+
 // init our synth
-const synth = new Tone.Synth().toDestination();
+const synth = new Tone.PolySynth();
 
 // Dialog
 introDialog.showModal();
@@ -32,7 +34,7 @@ function toneInit(){
 
 
 //do something when the button is clicked
-testButton.addEventListener("click", playNote);
+//testButton.addEventListener("click", playNote);
 
 //function that runs on button click
 //function is used instead of void basically
@@ -40,3 +42,32 @@ function playNote() {
     //play note c4 for a semiquaver length
     synth.triggerAttackRelease("c4", "8n");
 }
+
+function playDataNote(e){
+    let buttonCLicked = e.target;
+    console.log(buttonCLicked);
+    let note = buttonCLicked.dataset.note;
+    console.log(e.target);
+    synth.triggerAttackRelease(note, "8n");
+}
+
+function startNote(e){
+    //find key that was clicked
+    let keyPressed = e.target;
+    let note = keyPressed.dataset.note;
+    synth.triggerAttack(note);
+}
+
+function endNote(e){
+    let keyPressed = e.target;
+    let note = keyPressed.dataset.note;
+    synth.triggerRelease(note);
+}
+
+key.addEventListener("mousedown", startNote);
+key.addEventListener("mouseup", endNote);
+key.addEventListener("mouseleave", endNote);
+
+
+//key.addEventListener("click", playDataNote);
+//testButton.addEventListener("click", playDataNote);
