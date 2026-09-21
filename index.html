@@ -27,9 +27,52 @@
         <h1>Audio Instrument</h1>
     </header>
 
-    <main>
-        <button id="test-button">sound check</button>
-        <button id="key-test" data-note="d4">key</button>
+    <main class="synth-container">
+
+        <!-- PLAYER 1 (LEFT THIRD): Waveform & Master Volume -->
+        <section class="panel player-left">
+            <h2>Player 1: Wave & Vol</h2>
+
+            <div class="control-group">
+                <label for="waveType">Waveform Type:</label>
+                <select id="waveType">
+                    <option value="sine">Sine</option>
+                    <option value="square">Square</option>
+                    <option value="sawtooth">Sawtooth</option>
+                    <option value="triangle">Triangle</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="volumeSlider">Master Volume (dB):</label>
+                <input type="range" id="volumeSlider" min="-30" max="0" step="1" value="-6">
+            </div>
+
+            <button id="spawnBallLeft" class="ball-btn">Spawn Left Note</button>
+        </section>
+
+        <!-- STAVE / PLAYHEAD ZONE (MIDDLE THIRD) -->
+        <section class="panel stave-center" id="staveZone">
+            <div id="playhead"></div>
+        </section>
+
+        <!-- PLAYER 2 (RIGHT THIRD): Pitch Range & Speed -->
+        <section class="panel player-right">
+            <h2>Player 2: Pitch & Tempo</h2>
+
+            <div class="control-group">
+                <label for="pitchOffset">Octave Shift:</label>
+                <input type="range" id="pitchOffset" min="2" max="5" step="1" value="3">
+            </div>
+
+            <div class="control-group">
+                <label for="speedSlider">Scan Speed (BPM):</label>
+                <input type="range" id="speedSlider" min="40" max="240" step="1" value="120">
+            </div>
+
+            <button id="spawnBallRight" class="ball-btn">Spawn Right Note</button>
+        </section>
+
     </main>
 
 

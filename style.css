@@ -25,6 +25,23 @@ body {
     font-family: "IBM Plex Serif", serif;
     background-color: var(--colour-01);
     color: var(--colour-02);
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+}
+
+header {
+    text-align: center;
+    padding: 0.75rem 0;
+    border-bottom: var(--border);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.25rem;
 }
 
 dialog[open] {
