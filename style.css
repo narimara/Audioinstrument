@@ -46,10 +46,10 @@ header h1 {
     font-size: 1.25rem;
 }
 
-/*3 column split container*/
-.synth-container {
+/*2 column split container: Player 1 Left (1fr) | Stave Right (2fr)*/
+.app-container {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr; /* 25% | 50% | 25% */
+    grid-template-columns: 1fr 2fr;
     flex: 1;
     height: calc(100vh - 50px);
 }
@@ -65,10 +65,6 @@ header h1 {
 
 .player-left {
     border-right: var(--border);
-}
-
-.player-right {
-    border-left: var(--border);
 }
 
 .control-group {
@@ -114,13 +110,16 @@ select, input[type="range"] {
     position: absolute;
     background-color: var(--colour-05);
     border: 2px solid var(--colour-02);
-    cursor: grab;
     transform: translate(-50%, -50%);
     transition: transform 0.1s ease;
 }
 
-.note-ball:active {
-    cursor: grabbing;
+/*Player 2 active selected state*/
+.note-ball.active-selected {
+    background-color: var(--colour-05);
+    border: 2px solid var(--colour-01);
+    box-shadow: 0 0 10px var(--colour-05);
+    z-index: 5;
 }
 
 /*buttons andd ialog*/

@@ -59,11 +59,12 @@ volumeSlider.addEventListener('input', (e) => {
 //drag and drop controls for notes
 //track position on the stave using coordinates as ratios???
 const staveZone = document.getElementById('staveZone');
-const spawnBtnLeft = document.getElementById('spawnBallLeft');
-const spawnBtnRight = document.getElementById('spawnBallRight');
+const spawnBtn = document.getElementById('spawnBallBtn');
+const p2Status = document.getElementById('p2-status');
 
 //array tracking all note objects currently on the stave
 const notes = [];
+let activeP2Index = -1; //tracks which note p2 is editing
 
 /**
  * creates a new note ball element inside the stave zone.
@@ -86,11 +87,20 @@ function createBall(xPercent, yPercent) {
     staveZone.appendChild(ballElement);
     notes.push(noteObj);
 
+    //automatically select the new ball for Player 2
+    selectNoteForP2(notes.length - 1);
+
     //play a preview note on creation
     playPreviewSound(noteObj.xRatio);
 
-    //attach dragging event handlers
-    setupBallDragging(noteObj);
+    ballElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const clickedIndex = notes.indexOf(noteObj);
+        if (clickedIndex !== -1) {
+            selectNoteForP2(clickedIndex);
+            playPreviewSound(noteObj.xRatio);
+        }
+    });
 }
 
 // Updates the CSS left and top percentage properties for the ball.
@@ -122,43 +132,107 @@ function playPreviewSound(xRatio) {
     synth.triggerAttackRelease(previewFreq, "16n");
 }
 
-//Mouse events allowing the ball to be dragged inside stave boundaries.
-function setupBallDragging(noteObj) {
-    let isDragging = false;
-
-    // Click on ball starts dragging
-    noteObj.element.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        e.stopPropagation();
-    });
-
-    // Release mouse anywhere stops dragging
-    window.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
-            playPreviewSound(noteObj.xRatio); // Play note on drop
-        }
-    });
-
-    // Moving mouse across stave updates position if dragging
-    staveZone.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-
-        const rect = staveZone.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-
-        // Keep ball bounded between 5% and 95% of stave area
-        noteObj.xRatio = Math.max(0.05, Math.min(mouseX / rect.width, 0.95));
-        noteObj.yRatio = Math.max(0.05, Math.min(mouseY / rect.height, 0.95));
-
-        updateBallDOMPosition(noteObj);
-    });
+// Spawn button event listener
+if (spawnBtn) {
+    spawnBtn.addEventListener('click', () => createBall(0.5, 0.5));
 }
 
-// Spawn Buttons Event Listeners
-spawnBtnLeft.addEventListener('click', () => createBall(0.25, 0.5));
-spawnBtnRight.addEventListener('click', () => createBall(0.75, 0.5));
+// Highlights a target note and updates the Player 2 UI status label
+function selectNoteForP2(index) {
+    // Clear active highlight from all notes
+    notes.forEach((note) => note.element.classList.remove('active-selected'));
+
+    if (index >= 0 && index < notes.length) {
+        activeP2Index = index;
+        notes[activeP2Index].element.classList.add('active-selected');
+        if (p2Status) {
+            p2Status.textContent = `Note #${activeP2Index + 1} of ${notes.length}`;
+        }
+    } else {
+        activeP2Index = -1;
+        if (p2Status) {
+            p2Status.textContent = "No active note";
+        }
+    }
+}
+
+// Deletes the currently active note selected by Player 2
+function deleteSelectedNote() {
+    if (activeP2Index === -1 || notes.length === 0) return;
+
+    // Remove DOM element from stave
+    const noteToDelete = notes[activeP2Index];
+    if (noteToDelete.element && noteToDelete.element.parentNode) {
+        noteToDelete.element.parentNode.removeChild(noteToDelete.element);
+    }
+
+    // Remove from notes array
+    notes.splice(activeP2Index, 1);
+
+    // Select the previous note, or clear selection if no notes remain
+    if (notes.length > 0) {
+        const nextSelection = Math.max(0, activeP2Index - 1);
+        selectNoteForP2(nextSelection);
+    } else {
+        selectNoteForP2(-1);
+    }
+}
+
+// Keyboard controls for Player 2
+window.addEventListener('keydown', (e) => {
+    // Prevent arrow keys, spacebar, and backspace from scrolling or navigating back
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " ", "Backspace", "Delete"].includes(e.key)) {
+        e.preventDefault();
+    }
+
+    if (notes.length === 0) return;
+
+    // BACKSPACE / DELETE: Remove selected note
+    if (e.key === "Backspace" || e.key === "Delete") {
+        deleteSelectedNote();
+        return;
+    }
+
+    // SPACEBAR: Cycle selection backwards (wraps around infinitely)
+    if (e.key === " " || e.code === "Space") {
+        if (activeP2Index !== -1) {
+            let nextIndex = activeP2Index - 1;
+            if (nextIndex < 0) {
+                nextIndex = notes.length - 1; // Wrap around to newest note
+            }
+            selectNoteForP2(nextIndex);
+        } else {
+            selectNoteForP2(notes.length - 1);
+        }
+        return;
+    }
+
+    // ARROW KEYS: Nudge position of selected note
+    if (activeP2Index !== -1) {
+        const activeNote = notes[activeP2Index];
+        const step = 0.02;
+        let moved = false;
+
+        if (e.key === "ArrowUp") {
+            activeNote.yRatio = Math.max(0.05, activeNote.yRatio - step);
+            moved = true;
+        } else if (e.key === "ArrowDown") {
+            activeNote.yRatio = Math.min(0.95, activeNote.yRatio + step);
+            moved = true;
+        } else if (e.key === "ArrowLeft") {
+            activeNote.xRatio = Math.max(0.05, activeNote.xRatio - step);
+            moved = true;
+        } else if (e.key === "ArrowRight") {
+            activeNote.xRatio = Math.min(0.95, activeNote.xRatio + step);
+            moved = true;
+        }
+
+        if (moved) {
+            updateBallDOMPosition(activeNote);
+            playPreviewSound(activeNote.xRatio);
+        }
+    }
+});
 
 
 

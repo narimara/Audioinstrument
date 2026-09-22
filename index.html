@@ -14,70 +14,67 @@
     <script src="main.js" defer></script>
 </head>
 <body>
-    <dialog id="intro-dialog">
-        <p>
-            Hello i am dialog
-        </p>
-        <button id="intro-dialog-close">
-            ok
-        </button>
-    </dialog>
+<dialog id="intro-dialog">
+    <p>
+    <h2>This page is intended to play sounds</h2>
+    <p>Player 1 controls the mouse</p>
+    <p>Player 2 controls keyboard. Move selected note with ⬆️⬇️⬅️➡️ Arrow Keys. Press <kbd>Spacebar</kbd> to
+        change selected note</p>
+
+    <button id="intro-dialog-close">
+        OK
+    </button>
+</dialog>
 
 
-    <header>
-        <h1>Collaborative Audio Instrument</h1>
-        <button id="playPauseBtn" class="play-btn">▶ Play</button>
-    </header>
+<header>
+    <h1>Audio Instrument</h1>
+</header>
 
-    <main class="synth-container">
+<div class="app-container">
+    <!-- PLAYER 1: WORKSPACE (Left Side) -->
+    <aside class="panel player-panel" id="player1-panel">
+        <h2>Player 1 Controls</h2>
 
-        <!-- PLAYER 1 (LEFT THIRD): Waveform & Master Volume -->
-        <section class="panel player-left">
-            <h2>Player 1: Wave & Vol</h2>
+        <div class="control-group">
+            <button id="playPauseBtn" class="primary-btn">▶ Play</button>
+            <button id="spawnBallBtn" class="action-btn">+ Add Note</button>
+        </div>
 
-            <div class="control-group">
-                <label for="waveType">Waveform Type:</label>
-                <select id="waveType">
-                    <option value="sine">Sine</option>
-                    <option value="square">Square</option>
-                    <option value="sawtooth">Sawtooth</option>
-                    <option value="triangle">Triangle</option>
-                </select>
-            </div>
+        <div class="control-group">
+            <label for="waveType">Waveform</label>
+            <select id="waveType">
+                <option value="sine">Sine</option>
+                <option value="square">Square</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+            </select>
+        </div>
 
-            <div class="control-group">
-                <label for="volumeSlider">Master Volume (dB):</label>
-                <input type="range" id="volumeSlider" min="-30" max="0" step="1" value="-6">
-            </div>
+        <div class="control-group">
+            <label for="speedSlider">Loop Speed (BPM)</label>
+            <input type="range" id="speedSlider" min="40" max="240" value="120">
+        </div>
 
-            <button id="spawnBallLeft" class="ball-btn">Spawn Left Note</button>
-        </section>
+        <div class="control-group">
+            <label for="volumeSlider">Volume (dB)</label>
+            <input type="range" id="volumeSlider" min="-30" max="0" value="-6" step="1">
+        </div>
 
-        <!-- STAVE / PLAYHEAD ZONE (MIDDLE THIRD) -->
-        <section class="panel stave-center" id="staveZone">
-            <div id="playhead"></div>
-        </section>
+        <div class="p2-info-box">
+            <h3>Player 2 Controls</h3>
+            <p><kbd>⬆️ / ⬇️</kbd> Change Timing (Y)</p>
+            <p><kbd>⬅️ / ➡️</kbd> Change Pitch (X)</p>
+            <p><kbd>Spacebar</kbd> Cycle Selected Note</p>
+            <p class="status-line"><strong>Status:</strong> <span id="p2-status">No active note</span></p>
+        </div>
+    </aside>
 
-        <!-- PLAYER 2 (RIGHT THIRD): Pitch Range & Speed -->
-        <section class="panel player-right">
-            <h2>Player 2: Pitch & Tempo</h2>
-
-            <div class="control-group">
-                <label for="pitchOffset">Octave Shift:</label>
-                <input type="range" id="pitchOffset" min="2" max="5" step="1" value="3">
-            </div>
-
-            <div class="control-group">
-                <label for="speedSlider">Scan Speed (BPM):</label>
-                <input type="range" id="speedSlider" min="40" max="240" step="1" value="120">
-            </div>
-
-            <button id="spawnBallRight" class="ball-btn">Spawn Right Note</button>
-        </section>
-
+    <!-- RIGHT SIDE: STAVE ZONE (Player 2 Sandbox) -->
+    <main class="panel stave-center" id="staveZone">
+        <div id="playhead"></div>
     </main>
-
-
+</div>
 
 </body>
 </html>
