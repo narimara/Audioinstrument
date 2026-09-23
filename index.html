@@ -17,9 +17,9 @@
 <dialog id="intro-dialog">
     <p>
     <h2>This page is intended to play sounds</h2>
-    <p>Player 1 controls the mouse</p>
-    <p>Player 2 controls keyboard. Move selected note with ⬆️⬇️⬅️➡️ Arrow Keys. Press <kbd>Spacebar</kbd> to
-        change selected note</p>
+    <p>Player 1 controls buttons and sliders with the mouse</p>
+    <p>Player 2 controls notes with the keyboard. Move selected note with arrow keys.
+        Press Space to change selected note</p>
 
     <button id="intro-dialog-close">
         OK
@@ -63,14 +63,13 @@
 
         <div class="p2-info-box">
             <h3>Player 2 Controls</h3>
-            <p><kbd>⬆️ / ⬇️</kbd> Change Timing (Y)</p>
-            <p><kbd>⬅️ / ➡️</kbd> Change Pitch (X)</p>
-            <p><kbd>Spacebar</kbd> Cycle Selected Note</p>
+            <p>⬆️ / ⬇️ Change Timing</p>
+            <p>⬅️ / ➡️ Change Pitch</p>
+            <p><strong>Space</strong> Cycle Selected Note</p>
             <p class="status-line"><strong>Status:</strong> <span id="p2-status">No active note</span></p>
         </div>
     </aside>
 
-    <!-- RIGHT SIDE: STAVE ZONE (Player 2 Sandbox) -->
     <main class="panel stave-center" id="staveZone">
         <div id="playhead"></div>
     </main>
