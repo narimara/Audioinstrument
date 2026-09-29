@@ -17,9 +17,7 @@
 <dialog id="intro-dialog">
     <p>
     <h2>This page is intended to play sounds. Please check your system's volume level</h2>
-    <p>Player 1 controls buttons and sliders with the mouse</p>
-    <p>Player 2 controls notes with the keyboard. Move selected note with arrow keys.
-        Press Space to change selected note</p>
+
 
     <button id="intro-dialog-close">
         OK
@@ -34,39 +32,49 @@
 <div class="app-container">
     <!-- PLAYER 1: WORKSPACE (Left Side) -->
     <aside class="panel player-panel" id="player1-panel">
-        <h2>Player 1 Controls</h2>
+        <h2>Mouse Controls</h2>
 
-        <div class="control-group">
-            <button id="playPauseBtn" class="primary-btn">▶ Play</button>
+        <!-- Step 1: Add Note (Always Visible) -->
+        <div class="control-group" id="step1-group">
             <button id="spawnBallBtn" class="action-btn">+ Add Note</button>
         </div>
 
-        <div class="control-group">
-            <label for="waveType">Waveform</label>
-            <select id="waveType">
-                <option value="sine">Sine</option>
-                <option value="square">Square</option>
-                <option value="triangle">Triangle</option>
-                <option value="sawtooth">Sawtooth</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label for="speedSlider">Speed</label>
-            <input type="range" id="speedSlider" min="40" max="240" value="120">
-        </div>
-
-        <div class="control-group">
-            <label for="volumeSlider">Volume</label>
-            <input type="range" id="volumeSlider" min="-30" max="0" value="-6" step="1">
-        </div>
-
-        <div class="p2-info-box">
-            <h3>Player 2 Controls</h3>
-            <p>⬆️ / ⬇️ Change Timing</p>
-            <p>⬅️ / ➡️ Change Pitch</p>
-            <p><strong>Space:</strong> Cycle Selected Note</p>
+        <!-- Step 2: Keyboard Controls (Revealed after clicking Add Note) -->
+        <div class="p2-info-box revealable hidden" id="step2-group">
+            <h3>Keyboard Controls</h3>
+            <p><strong>arrow keys</strong> (Move Note)</p>
+            <p><strong>Spacebar</strong> (Select Note)</p>
+            <p><strong>Backspace</strong> (Delete Note)</p>
             <p class="status-line"><strong>Status:</strong> <span id="p2-status">No active note</span></p>
+        </div>
+
+        <!-- Step 3: Play/Pause Controls (Revealed after moving a note) -->
+        <div class="control-group revealable hidden" id="step3-group">
+            <button id="playPauseBtn" class="primary-btn">▶ Play</button>
+        </div>
+
+        <!-- Step 4: Waveform Selector (Revealed after pressing Play/Pause) -->
+        <div class="control-group revealable hidden" id="step4-group">
+            <label>Waveform</label>
+            <div class="waveform-selector" id="waveSelector">
+                <button type="button" class="wave-btn active" data-value="sine">Sine</button>
+                <button type="button" class="wave-btn" data-value="square">Square</button>
+                <button type="button" class="wave-btn" data-value="triangle">Triangle</button>
+                <button type="button" class="wave-btn" data-value="sawtooth">Sawtooth</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Sliders (Revealed after selecting a waveform) -->
+        <div class="sliders-container revealable hidden" id="step5-group">
+            <div class="control-group vertical-group">
+                <label for="speedSlider">Speed</label>
+                <input type="range" id="speedSlider" min="40" max="240" value="120" class="vertical-range">
+            </div>
+
+            <div class="control-group vertical-group">
+                <label for="volumeSlider">Volume</label>
+                <input type="range" id="volumeSlider" min="-30" max="0" value="-6" step="1" class="vertical-range">
+            </div>
         </div>
     </aside>
 

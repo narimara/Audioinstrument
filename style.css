@@ -80,6 +80,21 @@ header h1 {
     border-right: var(--border-tech);
 }
 
+.revealable {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease;
+    max-height: 500px;
+}
+
+.revealable.hidden {
+    display: none !important;
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+    overflow: hidden;
+}
+
 .player-left {
     box-shadow: inset -5px 0 15px rgba(0, 0, 0, 0.5);
 }
@@ -96,6 +111,57 @@ label {
     color: var(--colour-05);
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+.waveform-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.wave-btn {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+    border: 1px solid var(--colour-04);
+    color: var(--colour-04);
+    background-color: #04080a;
+    text-align: center;
+}
+
+.wave-btn:hover {
+    background-color: var(--colour-03);
+    color: #ffffff;
+}
+
+.wave-btn.active {
+    background-color: var(--colour-04);
+    color: #000000;
+    font-weight: bold;
+    box-shadow: var(--glow-cyan);
+}
+
+.sliders-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #04080a;
+    border: 1px solid var(--colour-04);
+    padding: 1rem 0.5rem;
+    border-radius: 4px;
+}
+
+.vertical-group {
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.vertical-range {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 24px;
+    height: 120px;
+    accent-color: var(--colour-04);
+    cursor: pointer;
 }
 
 select, input[type="range"] {
