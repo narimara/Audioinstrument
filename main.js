@@ -87,8 +87,8 @@ function createBall(xPercent, yPercent) {
     const ballElement = document.createElement('div');
     ballElement.classList.add('note-ball');
 
-    const xStep = Math.max(0, Math.min(Math.round(xPercent * (pitch_steps - 1)), pitch_steps - 1));
-    const yStep = Math.max(0, Math.min(Math.round(yPercent * (time_steps - 1)), time_steps - 1));
+    const xStep = Math.max(0, Math.min(Math.round(xPercent * (time_steps - 1)), time_steps - 1));
+    const yStep = Math.max(0, Math.min(Math.round(yPercent * (pitch_steps - 1)), pitch_steps - 1));
 
     //note created has a random duration from 1-4 beats
     const durationBeats = Math.floor(Math.random() * 4) + 1;
@@ -98,8 +98,8 @@ function createBall(xPercent, yPercent) {
         element: ballElement,
         xStep: xStep, // Integer 0 to 11 (Exact pitch offset)
         yStep: yStep, // Integer 0 to 15 (Exact time beat)
-        xRatio: xStep / (pitch_steps - 1), // Exact decimal ratio for CSS positioning
-        yRatio: yStep / (time_steps - 1),
+        xRatio: xStep / (time_steps - 1), // Exact decimal ratio for CSS positioning
+        yRatio: yStep / (pitch_steps - 1),
         durationBeats: durationBeats,
         triggered: false
     };
@@ -128,9 +128,7 @@ function createBall(xPercent, yPercent) {
 function updateBallDOMPosition(noteObj) {
     noteObj.element.style.left = `${noteObj.xRatio * 100}%`;
     noteObj.element.style.top = `${noteObj.yRatio * 100}%`;
-
-    const stepHeightPercent = (1 / (time_steps - 1)) * 100;
-    noteObj.element.style.height = `calc(${noteObj.durationBeats * stepHeightPercent}% + 10px)`;
+    noteObj.element.style.width = `calc(${noteObj.durationBeats * stepWidthtPercent}% + 10px)`;
 
 }
 
@@ -238,25 +236,25 @@ window.addEventListener('keydown', (e) => {
 
         if (e.key === "ArrowUp") {
             activeNote.yStep = Math.max(0, activeNote.yStep - 1);
-            activeNote.yRatio = activeNote.yStep / (time_steps - 1);
+            activeNote.yRatio = activeNote.yStep / (pitch_steps - 1);
             moved = true;
         } else if (e.key === "ArrowDown") {
-            activeNote.yStep = Math.min(time_steps - 1, activeNote.yStep + 1);
-            activeNote.yRatio = activeNote.yStep / (time_steps - 1);
+            activeNote.yStep = Math.min(pitch_steps - 1, activeNote.yStep + 1);
+            activeNote.yRatio = activeNote.yStep / (pitch_steps - 1);
             moved = true;
         } else if (e.key === "ArrowLeft") {
             activeNote.xStep = Math.max(0, activeNote.xStep - 1);
-            activeNote.xRatio = activeNote.xStep / (pitch_steps - 1);
+            activeNote.xRatio = activeNote.xStep / (time_steps - 1);
             moved = true;
         } else if (e.key === "ArrowRight") {
-            activeNote.xStep = Math.min(pitch_steps - 1, activeNote.xStep + 1);
-            activeNote.xRatio = activeNote.xStep / (pitch_steps - 1);
+            activeNote.xStep = Math.min(time_steps - 1, activeNote.xStep + 1);
+            activeNote.xRatio = activeNote.xStep / (time_steps - 1);
             moved = true;
         }
 
         if (moved) {
             updateBallDOMPosition(activeNote);
-            playPreviewSound(activeNote.xStep, 1);
+            playPreviewSound(pitch_steps - 1 - activeNote.yStep, 1);
         }
     }
 });
@@ -265,7 +263,7 @@ window.addEventListener('keydown', (e) => {
 
 
 //play and pause handler for the playhead
-let playheadY = 0;
+let playheadX = 0;
 let isPlaying = false; // Paused by default on startup
 let animationFrameId = null; // Stores the requestAnimationFrame reference
 
@@ -302,15 +300,15 @@ function animate() {
     const bpm = speedInput ? parseFloat(speedInput.value) : 120;
     const stepSpeed = (bpm / 60) * 0.003;
 
-    playheadY += stepSpeed;
+    playheadX += stepSpeed;
 
-    if (playheadY >= 1.0) {
-        playheadY = 0;
+    if (playheadX >= 1.0) {
+        playheadX = 0;
     }
 
     const playhead = document.getElementById('playhead');
     if (playhead) {
-        playhead.style.top = `${playheadY * 100}%`;
+        playhead.style.top = `${playheadX * 100}%`;
     }
 
     // collision detection
@@ -318,22 +316,23 @@ function animate() {
     const baseOctave = pitchOffsetSlider ? parseInt(pitchOffsetSlider.value, 10) : 3;
 
     notes.forEach((note) => {
-        const verticalDistance = Math.abs(playheadY - note.yRatio);
+        const horizontalDistance = Math.abs(playheadX - note.xRatio);
 
-        if (verticalDistance < 0.015) {
+        if (horizontalDistance < 0.015) {
             if (!note.triggered) {
                 note.triggered = true;
 
                 try {
                     //calculate pitch and trigger sound
-                    const notePitchHz = calculateFrequency(note.xStep, baseOctave);
+                    const actualPitchStep = pitch_steps - 1 - note.yStep;
+                    const notePitchHz = calculateFrequency(actualPitchStep, baseOctave);
                     const durationTime = `${note.durationBeats * 0.25}s`;
                     synth.triggerAttackRelease(notePitchHz, durationTime);
 
                     //visual feedback animation on note hit
-                    note.element.style.transform = 'translate(-50%, 0) scale(1.15)';
+                    note.element.style.transform = 'translate(0, -50%) scale(1.15)';
                     setTimeout(() => {
-                        note.element.style.transform = 'translate(-50%, 0) scale(1.0)';
+                        note.element.style.transform = 'translate(0, -50%) scale(1.0)';
                     }, 150);
 
                 } catch (err) {
