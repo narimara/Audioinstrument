@@ -40,16 +40,24 @@ async function toneInit(){
 
 //controls for waveform and volume
 //binded to user 1
-const waveSelect = document.getElementById('waveType');
-const volumeSlider = document.getElementById('volumeSlider');
+const waveButtons = document.querySelectorAll('.wave-btn');
+waveButtons.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+        // Remove active class from all buttons
+        waveButtons.forEach((b) => b.classList.remove('active'));
 
-waveSelect.addEventListener('change', (e) => {
-    //update waveform across all voices in PolySynth
-    synth.set({ oscillator: { type: e.target.value } });
+        // Add active class to clicked button
+        e.target.classList.add('active');
+
+        // Update synth waveform
+        const selectedWave = e.target.getAttribute('data-value');
+        synth.set({ oscillator: { type: selectedWave } });
+    });
 });
 
+const volumeSlider = document.getElementById('volumeSlider');
 volumeSlider.addEventListener('input', (e) => {
-    //Tone.Destination volume is measured in decibels (-30dB to 0dB)
+//Tone.Destination volume is measured in decibels (-30dB to 0dB)
     Tone.Destination.volume.value = parseFloat(e.target.value);
 });
 

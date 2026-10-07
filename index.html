@@ -42,23 +42,26 @@
         </div>
 
         <div class="control-group">
-            <label for="waveType">Waveform</label>
-            <select id="waveType">
-                <option value="sine">Sine</option>
-                <option value="square">Square</option>
-                <option value="triangle">Triangle</option>
-                <option value="sawtooth">Sawtooth</option>
-            </select>
+            <label>Waveform</label>
+            <div class="waveform-selector" id="waveSelector">
+                <button type="button" class="wave-btn active" data-value="sine">Sine</button>
+                <button type="button" class="wave-btn" data-value="square">Square</button>
+                <button type="button" class="wave-btn" data-value="triangle">Triangle</button>
+                <button type="button" class="wave-btn" data-value="sawtooth">Sawtooth</button>
+            </div>
         </div>
 
-        <div class="control-group">
-            <label for="speedSlider">Speed</label>
-            <input type="range" id="speedSlider" min="40" max="240" value="120">
-        </div>
+        <!-- Vertical Sliders Container -->
+        <div class="sliders-container">
+            <div class="control-group vertical-group">
+                <label for="speedSlider">Speed</label>
+                <input type="range" id="speedSlider" min="40" max="240" value="120" class="vertical-range">
+            </div>
 
-        <div class="control-group">
-            <label for="volumeSlider">Volume</label>
-            <input type="range" id="volumeSlider" min="-30" max="0" value="-6" step="1">
+            <div class="control-group vertical-group">
+                <label for="volumeSlider">Volume</label>
+                <input type="range" id="volumeSlider" min="-30" max="0" value="-6" step="1" class="vertical-range">
+            </div>
         </div>
 
         <div class="p2-info-box">
