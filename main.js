@@ -128,7 +128,8 @@ function createBall(xPercent, yPercent) {
 function updateBallDOMPosition(noteObj) {
     noteObj.element.style.left = `${noteObj.xRatio * 100}%`;
     noteObj.element.style.top = `${noteObj.yRatio * 100}%`;
-    noteObj.element.style.width = `calc(${noteObj.durationBeats * stepWidthtPercent}% + 10px)`;
+    const stepWidthPercent = (1 / (time_steps - 1)) * 100;
+    noteObj.element.style.width = `calc(${noteObj.durationBeats * stepWidthPercent}% + 10px)`;
 
 }
 
@@ -308,7 +309,7 @@ function animate() {
 
     const playhead = document.getElementById('playhead');
     if (playhead) {
-        playhead.style.top = `${playheadX * 100}%`;
+        playhead.style.left = `${playheadX * 100}%`;
     }
 
     // collision detection
