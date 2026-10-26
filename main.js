@@ -339,7 +339,7 @@ function animate() {
                     const durationTime = `${note.durationBeats * 0.25}s`;
                     synth.triggerAttackRelease(notePitchHz, durationTime);
 
-                    //visual feedback animation on note hit
+                    // visual feedback animation on note hit
                     note.element.style.transform = 'translate(0, -50%) scale(1.15)';
                     setTimeout(() => {
                         note.element.style.transform = 'translate(0, -50%) scale(1.0)';
