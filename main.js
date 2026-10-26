@@ -73,15 +73,21 @@ const time_steps = 16;
 const staveZone = document.getElementById('staveZone');
 const spawnBtn = document.getElementById('spawnBallBtn');
 const p2Status = document.getElementById('p2-status');
+const controlInstruction = document.getElementById('control-instruction');
 
 //array tracking all note objects currently on the stave
 const notes = [];
 let activeP2Index = -1; //tracks which note p2 is editing
 
 /**
- * creates a new note ball element inside the stave zone.
- * @param {number} xStep - Grid step for time (0 to 15)
- * @param {number} yStep - Grid step for pitch (0 to 11)
+ - creates a new note ball element inside the stave zone.
+
+ -
+ - @param {number} xStep Grid step for time (0 to 15)
+
+ -
+ - @param {number} yStep Grid step for pitch (0 to 11)
+
  */
 function createBall(xStep = 0, yStep = 6) {
     const ballElement = document.createElement('div');
@@ -107,6 +113,14 @@ function createBall(xStep = 0, yStep = 6) {
 
     //automatically select the new ball for Player 2
     selectNoteForP2(notes.length - 1);
+
+    // Disable add note button and update instructions
+    if (spawnBtn) {
+        spawnBtn.disabled = true;
+    }
+    if (controlInstruction) {
+        controlInstruction.textContent = "Change the position of the new note to add another";
+    }
 
     ballElement.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -246,6 +260,14 @@ window.addEventListener('keydown', (e) => {
         if (moved) {
             updateBallDOMPosition(activeNote);
             playPreviewSound(pitch_steps - 1 - activeNote.yStep, 1);
+
+            // Re-enable add note button and reset instructions
+            if (spawnBtn) {
+                spawnBtn.disabled = false;
+            }
+            if (controlInstruction) {
+                controlInstruction.textContent = "Click + Add Note to place a note on the stave.";
+            }
         }
     }
 });

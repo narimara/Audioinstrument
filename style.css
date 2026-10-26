@@ -239,6 +239,13 @@ button {
     text-transform: uppercase;
 }
 
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+    box-shadow: none;
+}
+
 button:hover {
     background-color: var(--colour-05);
     color: #000000;
