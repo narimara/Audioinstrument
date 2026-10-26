@@ -57,7 +57,7 @@ waveButtons.forEach((btn) => {
 
 const volumeSlider = document.getElementById('volumeSlider');
 volumeSlider.addEventListener('input', (e) => {
-//Tone.Destination volume is measured in decibels (-30dB to 0dB)
+    //Tone.Destination volume is measured in decibels (-30dB to 0dB)
     Tone.Destination.volume.value = parseFloat(e.target.value);
 });
 
@@ -80,20 +80,17 @@ let activeP2Index = -1; //tracks which note p2 is editing
 
 /**
  * creates a new note ball element inside the stave zone.
- * @param {number} xPercent - Horizontal relative position (0.0 = left, 1.0 = right)
- * @param {number} yPercent - Vertical relative position (0.0 = top, 1.0 = bottom)
+ * @param {number} xStep - Grid step for time (0 to 15)
+ * @param {number} yStep - Grid step for pitch (0 to 11)
  */
-function createBall(xPercent, yPercent) {
+function createBall(xStep = 0, yStep = 6) {
     const ballElement = document.createElement('div');
     ballElement.classList.add('note-ball');
-
-    const xStep = Math.max(0, Math.min(Math.round(xPercent * (time_steps - 1)), time_steps - 1));
-    const yStep = Math.max(0, Math.min(Math.round(yPercent * (pitch_steps - 1)), pitch_steps - 1));
 
     //note created has a random duration from 1-4 beats
     const durationBeats = Math.floor(Math.random() * 4) + 1;
 
-    //storing ball coordinates as ratios (0.0 to 1.0)
+    //storing ball coordinates as ratios (0.0 to 1.0) based directly on grid steps
     const noteObj = {
         element: ballElement,
         xStep: xStep, // Integer 0 to 11 (Exact pitch offset)
@@ -111,15 +108,12 @@ function createBall(xPercent, yPercent) {
     //automatically select the new ball for Player 2
     selectNoteForP2(notes.length - 1);
 
-    //play a preview note on creation
-    //playPreviewSound(noteObj.xStep);
-
     ballElement.addEventListener('click', (e) => {
         e.stopPropagation();
         const clickedIndex = notes.indexOf(noteObj);
         if (clickedIndex !== -1) {
             selectNoteForP2(clickedIndex);
-            playPreviewSound(noteObj.xStep);
+            playPreviewSound(pitch_steps - 1 - noteObj.yStep, 1);
         }
     });
 }
@@ -128,28 +122,27 @@ function createBall(xPercent, yPercent) {
 function updateBallDOMPosition(noteObj) {
     noteObj.element.style.left = `${noteObj.xRatio * 100}%`;
     noteObj.element.style.top = `${noteObj.yRatio * 100}%`;
+
     const stepWidthPercent = (1 / (time_steps - 1)) * 100;
     noteObj.element.style.width = `calc(${noteObj.durationBeats * stepWidthPercent}% + 10px)`;
-
 }
 
-//calculate sound frequency using user 2 octave choice and ball x position
-function calculateFrequency(xStep, octave) {
+//calculate sound frequency using user octave choice and ball pitch position
+function calculateFrequency(pitchStep, octave) {
     const safeOctave = octave || 3;
-    const safeStep = (xStep !== undefined && xStep !== null) ? xStep : 0;
+    const safeStep = (pitchStep !== undefined && pitchStep !== null) ? pitchStep : 0;
 
     const baseMidi = (safeOctave + 1) * 12;
     const midiNote = baseMidi + safeStep;
 
     return 440 * Math.pow(2, (midiNote - 69) / 12);
-
 }
 
-//Plays a short pitch preview sound based on horizontal position.
-function playPreviewSound(xStep, durationBeats = 1) {
+//Plays a short pitch preview sound based on vertical position.
+function playPreviewSound(pitchStep, durationBeats = 1) {
     const pitchOffsetSlider = document.getElementById('pitchOffset');
     const baseOctave = pitchOffsetSlider ? parseInt(pitchOffsetSlider.value, 10) : 3;
-    const previewFreq = calculateFrequency(xStep, baseOctave);
+    const previewFreq = calculateFrequency(pitchStep, baseOctave);
 
     const durationNotation = `${durationBeats * 0.25}s`;
     synth.triggerAttackRelease(previewFreq, durationNotation);
@@ -157,7 +150,7 @@ function playPreviewSound(xStep, durationBeats = 1) {
 
 // Spawn button event listener
 if (spawnBtn) {
-    spawnBtn.addEventListener('click', () => createBall(0.5, 0.5));
+    spawnBtn.addEventListener('click', () => createBall(6, 6));
 }
 
 // Highlights a target note and updates the Player 2 UI status label
@@ -183,7 +176,6 @@ function selectNoteForP2(index) {
 function deleteSelectedNote() {
     if (activeP2Index === -1 || notes.length === 0) return;
 
-    // Remove DOM element from stave
     const noteToDelete = notes[activeP2Index];
     if (noteToDelete.element && noteToDelete.element.parentNode) {
         noteToDelete.element.parentNode.removeChild(noteToDelete.element);
@@ -210,12 +202,10 @@ window.addEventListener('keydown', (e) => {
 
     if (notes.length === 0) return;
 
-
     if (e.key === "Backspace" || e.key === "Delete") {
         deleteSelectedNote();
         return;
     }
-
 
     if (e.key === " " || e.code === "Space") {
         if (activeP2Index !== -1) {
@@ -262,7 +252,6 @@ window.addEventListener('keydown', (e) => {
 
 
 
-
 //play and pause handler for the playhead
 let playheadX = 0;
 let isPlaying = false; // Paused by default on startup
@@ -270,23 +259,21 @@ let animationFrameId = null; // Stores the requestAnimationFrame reference
 
 const playPauseBtn = document.getElementById('playPauseBtn');
 
-// Toggle play/pause state when button is clicked
 playPauseBtn.addEventListener('click', () => {
-    isPlaying = !isPlaying; // Flip state true <-> false
+    isPlaying = !isPlaying; // flip state true <-> false
 
     if (isPlaying) {
+        // start animation loop
         playPauseBtn.textContent = '⏸ Pause';
-        // Start animation loop
         animate();
     } else {
+        // Stop animation loop
         playPauseBtn.textContent = '▶ Play';
-        // Stop animation loop immediately
         if (animationFrameId) {
             cancelAnimationFrame(animationFrameId);
         }
     }
 });
-
 
 
 
